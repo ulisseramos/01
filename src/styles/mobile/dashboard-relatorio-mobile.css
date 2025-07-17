@@ -1,0 +1,73 @@
+/* Estilos mobile para dashboard e relatorio */
+@media (max-width: 600px) {
+  body {
+    padding: 0 !important;
+    margin: 0 !important;
+    background: #000000 !important;
+  }
+  .dashboard-main, .relatorio-main {
+    padding: 0.5rem !important;
+    min-width: 0 !important;
+  }
+  .dashboard-summary-cards, .relatorio-summary-cards {
+    flex-direction: column !important;
+    gap: 0.7rem !important;
+  }
+  .dashboard-summary-cards > *, .relatorio-summary-cards > * {
+    min-width: 0 !important;
+    max-width: 100% !important;
+    width: 100% !important;
+    margin-bottom: 0.3rem !important;
+    padding: 0.7rem 1rem !important;
+    border-radius: 12px !important;
+    box-shadow: 0 2px 8px #0002 !important;
+    font-size: 0.98rem !important;
+  }
+  .dashboard-summary-cards .card-title, .relatorio-summary-cards .card-title {
+    font-size: 1rem !important;
+    margin-bottom: 0.2rem !important;
+  }
+  .dashboard-summary-cards .card-value, .relatorio-summary-cards .card-value {
+    font-size: 1.3rem !important;
+    font-weight: 700 !important;
+    margin-bottom: 0.1rem !important;
+  }
+  .dashboard-summary-cards .card-subtext, .relatorio-summary-cards .card-subtext {
+    font-size: 0.85rem !important;
+    color: #a1a1aa !important;
+  }
+  .dashboard-chart, .relatorio-table {
+    width: 100vw !important;
+    min-width: 0 !important;
+    overflow-x: auto !important;
+    padding: 0 !important;
+  }
+  .dashboard-chart canvas, .relatorio-table table {
+    width: 100vw !important;
+    min-width: 400px !important;
+    max-width: 100vw !important;
+  }
+  .relatorio-table th, .relatorio-table td {
+    font-size: 13px !important;
+    padding: 6px 4px !important;
+  }
+  .dashboard-header, .relatorio-header {
+    font-size: 1.1rem !important;
+    margin-bottom: 0.4rem !important;
+    text-align: center !important;
+  }
+  .dashboard-filter, .relatorio-filter {
+    flex-direction: column !important;
+    gap: 0.5rem !important;
+    align-items: stretch !important;
+  }
+  .dashboard-filter input, .relatorio-filter input {
+    width: 100% !important;
+    font-size: 1rem !important;
+  }
+  .dashboard-btn, .relatorio-btn {
+    width: 100% !important;
+    font-size: 1rem !important;
+    padding: 0.7rem 0 !important;
+  }
+} 

@@ -24,8 +24,8 @@ const iconBg = [
 
 const SummaryCard = ({ icon, label, value, subtext, borderClass, iconClass }) => (
   <div
-    className={`relative bg-[#11131c] border ${borderClass} rounded-2xl px-7 py-6 flex items-center shadow-md min-h-[120px]`}
-    style={{ boxShadow: '0 2px 16px 0 rgba(80, 80, 120, 0.10)' }}
+    className={`relative bg-[#020204] border ${borderClass} rounded-2xl px-7 py-6 flex items-center shadow-md min-h-[120px]`}
+    style={{ boxShadow: '0 12px 40px 0 #000b, 0 2px 8px 0 #0006, 0 0px 0px 1.5px #23243a' }}
   >
     <div className="flex-1">
       <p className="text-sm text-gray-400 font-medium mb-1">{label}</p>
@@ -39,7 +39,7 @@ const SummaryCard = ({ icon, label, value, subtext, borderClass, iconClass }) =>
 );
 
 const SkeletonCard = () => (
-  <div className="bg-[#11131c] border border-gray-800 rounded-2xl px-7 py-6 flex-1 animate-pulse min-h-[120px] flex items-center">
+  <div className="bg-[#020204] border border-gray-800 rounded-2xl px-7 py-6 flex-1 animate-pulse min-h-[120px] flex items-center" style={{ boxShadow: '0 12px 40px 0 #000b, 0 2px 8px 0 #0006, 0 0px 0px 1.5px #23243a' }}>
     <div className="flex-1">
       <div className="h-4 bg-gray-700 rounded w-3/4 mb-2"></div>
       <div className="h-8 bg-gray-700 rounded w-1/2 mt-2"></div>

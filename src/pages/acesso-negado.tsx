@@ -4,7 +4,7 @@ export default function AcessoNegadoPage() {
   return (
     <div style={{
       minHeight: '100vh',
-      background: '#030712',
+      background: '#020204',
       display: 'flex',
       flexDirection: 'column',
       alignItems: 'center',

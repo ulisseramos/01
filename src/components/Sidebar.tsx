@@ -14,14 +14,16 @@ import {
   LogOut,
   Send,
   Menu,
-  ChevronLeft
+  ChevronLeft,
+  Sun,
+  Moon
 } from 'lucide-react';
 import styles from './Sidebar.module.css';
 
 const menu = [
   { label: 'Dashboard', href: '/dashboard', icon: (size) => <LayoutDashboard size={size} /> },
   { label: 'Produtos', href: '/produtos', icon: (size) => <ShoppingBag size={size} /> },
-  { label: 'Checkout', href: '/checkout/123', icon: (size) => <CreditCard size={size} /> },
+  { label: 'Editar Checkout', href: '/checkout/editar', icon: (size) => <CreditCard size={size} /> },
   { label: 'Relatórios', href: '/relatorio', icon: (size) => <BarChart2 size={size} /> },
   { label: 'Integrações', href: '/integracao', icon: (size) => <Plug size={size} /> },
   { label: 'Perfil', href: '/perfil', icon: (size) => <User size={size} /> },
@@ -53,6 +55,8 @@ export interface SidebarProps {
 const Sidebar = ({ open, setOpen }: SidebarProps) => {
   const router = useRouter();
 
+  // Remover o estado de theme e useEffect relacionado
+
   const handleLogout = async () => {
     await supabase.auth.signOut();
     router.push('/login');
@@ -76,18 +80,16 @@ const Sidebar = ({ open, setOpen }: SidebarProps) => {
   return (
     <>
       <aside
+        id="sidebar"
         className={styles.sidebar}
-        style={{ width: open ? 300 : 96, transition: 'width 0.2s' }}
+        style={{ width: open ? 300 : 96, transition: 'width 0.2s', borderRadius: '0 24px 24px 0' }}
       >
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', padding: '8px 16px 0 16px' }}>
           <div className={`${styles.logoArea} ${!open ? styles.logoAreaClosed : ''}`} style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', marginTop: 8, width: '100%' }}>
             <img
-              src={open ? "https://i.imgur.com/UUAV9T6.png" : "https://i.imgur.com/RGrHARN.png"}
+              src="https://i.imgur.com/miCfxv1.png"
               alt="Logo"
-              style={open
-                ? { height: 450, maxWidth: '100%', objectFit: 'contain', width: 'auto', display: 'block', filter: 'drop-shadow(0 2px 8px #0004)' }
-                : { height: 220, width: '100%', maxWidth: '100%', objectFit: 'contain', display: 'block', filter: 'drop-shadow(0 2px 8px #0004)' }
-              }
+              style={{ width: open ? 200 : 120, height: open ? 200 : 120, objectFit: 'contain', transition: 'width 0.2s, height 0.2s', filter: 'drop-shadow(0 2px 8px #0004)' }}
             />
           </div>
         </div>
@@ -97,24 +99,8 @@ const Sidebar = ({ open, setOpen }: SidebarProps) => {
           ))}
         </nav>
         <div className={styles.bottomArea}>
-          <button
-            onClick={() => setOpen(!open)}
-            style={{
-              background: 'none',
-              border: 'none',
-              color: '#a78bfa',
-              cursor: 'pointer',
-              padding: 8,
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: open ? 'flex-end' : 'flex-start',
-              width: '100%',
-              marginBottom: 8
-            }}
-            aria-label={open ? 'Fechar menu' : 'Abrir menu'}
-          >
-            {open ? <ChevronLeft size={28} /> : <Menu size={28} />}
-          </button>
+          {/* Removido o botão de alternância de tema */}
+          {/* Perfil */}
           <NavLink
             href={menu.find(item => item.label === 'Perfil')?.href || '/perfil'}
             label={open ? (<><User size={20} style={{marginRight: 8}} />Perfil</>) : <User size={20} />}

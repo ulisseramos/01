@@ -1,3 +1,4 @@
+@import './colors.css';
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -10,13 +11,14 @@
 }
 
 html, body, #__next {
+  /* Fundo transparente para modais reais */
+  background: transparent !important;
   height: 100vh !important;
   width: 100vw !important;
   min-height: 100vh !important;
   min-width: 100vw !important;
   margin: 0 !important;
   padding: 0 !important;
-  background: #030712 !important;
   box-shadow: none !important;
   border: none !important;
   outline: none !important;
@@ -24,6 +26,11 @@ html, body, #__next {
   color-scheme: dark;
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   scroll-behavior: smooth;
+}
+
+html, body {
+  scrollbar-color: #333 #1a1a1a;
+  scrollbar-width: thin;
 }
 
 /* ===== ANIMAÇÕES ESSENCIAIS ===== */
@@ -56,7 +63,7 @@ html, body, #__next {
 
 .btn-outline {
   @apply px-6 py-3 rounded-xl font-semibold transition-all duration-300;
-  background: #030712;
+  background: #09090B;
   border: 2px solid rgba(255, 255, 255, 0.3);
   color: white;
 }
@@ -70,9 +77,9 @@ html, body, #__next {
 /* ===== CARDS E CONTAINERS ===== */
 .card {
   @apply rounded-2xl p-6 transition-all duration-300;
-  background: #030712;
+  background: #09090B;
   border: 1px solid rgba(255, 255, 255, 0.1);
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 8px 32px 0 #000a, 0 2px 8px 0 #0006, 0 0px 0px 1.5px #23243a;
 }
 
 .card:hover {
@@ -233,6 +240,27 @@ html, body, #__next {
   margin-left: 8cm;
 }
 
+.integration-form-container, .integration-form-container * {
+  background: #09090B !important;
+}
+
+.select-produto {
+  border-radius: 12px;
+}
+
+.select-produto option,
+.select-produto optgroup {
+  border-radius: 12px;
+  background: #18122b;
+  color: #fff;
+}
+
+.select-produto:focus {
+  border-radius: 12px;
+  outline: none;
+  box-shadow: 0 0 0 2px #a78bfa55;
+}
+
 /* ===== RESPONSIVIDADE DASHBOARD MOBILE ===== */
 @media (max-width: 600px) {
   .dashboard-main, .dashboard-content, .dashboard-summary-cards, .dashboard-cards-row, .dashboard-chart-container {
@@ -290,4 +318,263 @@ html, body, #__next {
     gap: 0.5rem !important;
     align-items: flex-start !important;
   }
+} 
+
+/* ===== TEMA CLARO GLOBAL ===== */
+html.light, html.light body, html.light #__next {
+  background: #fff !important;
+  color: #181818 !important;
+  color-scheme: light;
+}
+html.light main, html.light .main, html.light .dashboard-main, html.light .dashboard-content, html.light .card, html.light .card-neon, html.light .card-glass {
+  background: #fff !important;
+  color: #181818 !important;
+  border-color: #e0e7ef !important;
+  box-shadow: 0 8px 32px 0 #0001, 0 2px 8px 0 #0002, 0 0px 0px 1.5px #e0e7ef;
+}
+html.light .btn-primary {
+  background: linear-gradient(135deg, #22c55e 0%, #2563eb 100%) !important;
+  color: #fff !important;
+}
+html.light .btn-outline {
+  background: #fff !important;
+  border: 2px solid #22c55e !important;
+  color: #22c55e !important;
+}
+html.light .btn-outline:hover {
+  background: #e0e7ef !important;
+  border-color: #2563eb !important;
+  color: #2563eb !important;
+}
+html.light input, html.light textarea, html.light select {
+  background: #fff !important;
+  color: #181818 !important;
+  border-color: #e0e7ef !important;
+}
+
+html.light .checkout-btn, html.light .checkout-btn-pro {
+  background: #2563eb !important;
+  color: #fff !important;
+}
+
+html.light .checkout-form-card, html.light .checkout-form-card-pro {
+  background: #fff !important;
+  border: 1.5px solid #e0e7ef !important;
+  color: #181818 !important;
+}
+
+html.light .checkout-qrcode, html.light .checkout-qrcode-pro {
+  background: #f8fafc !important;
+  color: #181818 !important;
+} 
+
+/* ===== TEMA CLARO CARDS DASHBOARD ===== */
+html.light .dashboard-summary-card {
+  background: #fff !important;
+  border: 1px solid #e0e7ef !important;
+  color: #181818 !important;
+  box-shadow: 0 12px 40px 0 #2563eb11, 0 2px 8px 0 #2563eb08, 0 0px 0px 1.5px #e0e7ef;
+}
+html.light .card-title, html.light .card-value {
+  color: #181818 !important;
+}
+html.light .card-icon {
+  color: #2563eb !important;
+  border-color: #e0e7ef !important;
+  background: #e0e7ef !important;
+} 
+
+/* ===== TEMA CLARO SIDEBAR (FORÇADO GLOBAL) ===== */
+#sidebar.light,
+#sidebar.light * {
+  background: #fff !important;
+  color: #181818 !important;
+  border-color: #e0e7ef !important;
+  box-shadow: 0 2px 16px #2563eb11 !important;
+} 
+
+/* ===== CARDS ESTILO IMAGEM NO TEMA CLARO (BORDA #E4CFF6) ===== */
+html.light .dashboard-summary-card,
+html.light .card,
+html.light .relatorioCard,
+html.light .productCard,
+html.light .perfilCard,
+html.light .integracaoCard {
+  background: #fff !important;
+  border: 1.5px solid #E4CFF6 !important;
+  box-shadow: 0 1px 6px 0 #e9d7fe33 !important;
+  color: #181818 !important;
+  border-radius: 16px !important;
+}
+html.light .chart-container,
+html.light .dashboard-graph-container {
+  border: 1.5px solid #E4CFF6 !important;
+  background: #fff !important;
+  border-radius: 16px !important;
+}
+html.light .card-title,
+html.light .card-value {
+  color: #181818 !important;
+}
+html.light .card-icon,
+html.light .dashboard-summary-card svg {
+  color: #a1a1aa !important;
+}
+html.light .card-details,
+html.light .card-link {
+  color: #a1a1aa !important;
+  font-weight: 500;
+} 
+
+html.light, html.light body {
+  color: #181818 !important;
+  background: #fff !important;
+}
+
+html.light * {
+  color: #181818 !important;
+  border-color: #E4CFF6 !important;
+  box-shadow: none !important;
+}
+
+html.light a {
+  color: #2563eb !important;
+}
+
+html.light .icon, html.light svg {
+  color: #2563eb !important;
+  fill: #2563eb !important;
+} 
+
+/* =========================
+   SISTEMA DE CORES GLOBAL
+   ========================= */
+:root {
+  --color-bg: #020204;
+  --color-text: #fff;
+  --color-border: #1A0938;
+  --color-primary: #a78bfa;
+  --color-secondary: #23243a;
+  --color-link: #2563eb;
+  --color-card: #18122B;
+  --color-card-border: #23243a;
+  --color-success: #22c55e;
+  --color-danger: #ef4444;
+  --color-warning: #facc15;
+  --color-info: #38bdf8;
+  --color-muted: #a1a1aa;
+  --color-icon: #a78bfa;
+}
+
+html.light {
+  --color-bg: #fff;
+  --color-text: #181818;
+  --color-border: #E4CFF6;
+  --color-primary: #2563eb;
+  --color-secondary: #f8fafc;
+  --color-link: #2563eb;
+  --color-card: #fff;
+  --color-card-border: #E4CFF6;
+  --color-success: #22c55e;
+  --color-danger: #ef4444;
+  --color-warning: #facc15;
+  --color-info: #2563eb;
+  --color-muted: #64748b;
+  --color-icon: #2563eb;
+}
+
+body {
+  background: var(--color-bg);
+  color: var(--color-text);
+}
+
+a {
+  color: var(--color-link);
+}
+
+.card, .dashboard-main, .sidebar, .input, .button, .profile-card, .relatorio-card, .product-card {
+  background: var(--color-card);
+  color: var(--color-text);
+  border-color: var(--color-card-border);
+}
+
+.icon, svg {
+  color: var(--color-icon);
+  fill: var(--color-icon);
+}
+
+/* Fim do sistema de cores global */ 
+
+html.light, html.light body, html.light * {
+  color: #181818 !important;
+} 
+
+/* Scrollbar customizada para dropdown do modal de produtos */
+.dropdown-scroll::-webkit-scrollbar {
+  width: 10px;
+  background: #1A0938;
+  border-radius: 8px;
+}
+.dropdown-scroll::-webkit-scrollbar-thumb {
+  background: #23243a;
+  border-radius: 8px;
+  border: 2px solid #1A0938;
+}
+.dropdown-scroll::-webkit-scrollbar-thumb:hover {
+  background: #a78bfa;
+}
+.dropdown-scroll::-webkit-scrollbar-corner {
+  background: #1A0938;
+} 
+
+/* Força o modal de edição de checkout a ter o mesmo tamanho do modal de produto */
+.productFormModal {
+  max-width: calc(1100px + 2cm) !important;
+  width: 100% !important;
+  padding: 48px 32px !important;
+  border-radius: 18px !important;
+  background: #000 !important;
+  box-shadow: 0 8px 40px 0 #000a, 0 1.5px 8px #2228 !important;
+  border: none !important;
+  position: relative !important;
+  overflow: visible !important;
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+}
+.productFormModal.DialogContent, .productFormModal[data-state] {
+  max-width: calc(1100px + 2cm) !important;
+  width: 100% !important;
+} 
+
+@keyframes dialog-in {
+  0% {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0.95);
+  }
+  100% {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+  }
+}
+@keyframes dialog-out {
+  0% {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0.95);
+  }
+}
+[data-state="open"].animate-dialog-in {
+  animation: dialog-in 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+}
+[data-state="closed"].animate-dialog-out {
+  animation: dialog-out 0.18s cubic-bezier(0.16, 1, 0.3, 1);
+} 
+
+.body-modal-open {
+  overflow: hidden !important;
+  position: relative !important;
 } 

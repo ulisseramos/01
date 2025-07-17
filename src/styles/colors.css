@@ -1,0 +1,39 @@
+/* =========================
+   CORES GLOBAIS DO SITE
+   ========================= */
+
+/* Tema escuro (padrão) */
+:root {
+  --color-bg: #020204;
+  --color-text: #fff;
+  --color-border: #1A0938;
+  --color-primary: #a78bfa;
+  --color-secondary: #23243a;
+  --color-link: #2563eb;
+  --color-card: #18122B;
+  --color-card-border: #23243a;
+  --color-success: #22c55e;
+  --color-danger: #ef4444;
+  --color-warning: #facc15;
+  --color-info: #38bdf8;
+  --color-muted: #a1a1aa;
+  --color-icon: #a78bfa;
+}
+
+/* Tema claro */
+html.light {
+  --color-bg: #fff;
+  --color-text: #181818;
+  --color-border: #E4CFF6;
+  --color-primary: #2563eb;
+  --color-secondary: #f8fafc;
+  --color-link: #2563eb;
+  --color-card: #fff;
+  --color-card-border: #E4CFF6;
+  --color-success: #22c55e;
+  --color-danger: #ef4444;
+  --color-warning: #facc15;
+  --color-info: #2563eb;
+  --color-muted: #64748b;
+  --color-icon: #2563eb;
+} 

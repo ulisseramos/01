@@ -39,7 +39,9 @@ const DialogContent = React.forwardRef<
     <DialogPrimitive.Content
       ref={ref}
       className={cn(
+        // Animação de abertura: fade e scale
         "fixed left-1/2 top-1/2 z-[9999] grid w-full max-w-lg translate-x-[-50%] translate-y-[-50%] gap-4 border border-zinc-200 bg-white p-6 shadow-lg duration-200 dark:border-zinc-800 dark:bg-zinc-900 sm:rounded-lg",
+        "data-[state=open]:animate-dialog-in data-[state=closed]:animate-dialog-out",
         className
       )}
       {...props}

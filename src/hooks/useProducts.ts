@@ -17,7 +17,8 @@ export function useProducts() {
         const { data, error } = await supabase
             .from('products')
             .select('*')
-            .eq('user_id', user.id);
+            .eq('user_id', user.id)
+            .or('is_checkout.is.false,is_checkout.is.null');
 
         if (error) {
             console.error('Erro ao buscar produtos:', error);

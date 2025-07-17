@@ -1,14 +1,11 @@
 @media (max-width: 600px) {
   .dashboard-main, .dashboard-content, .dashboard-summary-cards, .dashboard-cards-row, .dashboard-chart-container {
     margin: 0 !important;
-    left: 0 !important;
-    right: 0 !important;
-    width: 90vw !important;
-    max-width: 90vw !important;
-    min-width: 0 !important;
+    right: 2 !important;
+    width: 80vw !important;
+    max-width: 80vw !important;
     padding-left: 0px !important;
     padding-right: 9px !important;
-    box-sizing: border-box !important;
     justify-content: flex-start !important;
     align-items: flex-start !important;
     display: flex !important;

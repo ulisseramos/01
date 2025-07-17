@@ -17,6 +17,7 @@ export default function IntegrationForm({ type, onSuccess }: IntegrationFormProp
   const [active, setActive] = useState(false);
   const [message, setMessage] = useState('');
   const [loading, setLoading] = useState(false);
+  const [initialLoading, setInitialLoading] = useState(true);
   // Facebook Pixel
   const [pixelId, setPixelId] = useState('');
   const [pixelMsg, setPixelMsg] = useState('');
@@ -27,6 +28,7 @@ export default function IntegrationForm({ type, onSuccess }: IntegrationFormProp
 
   useEffect(() => {
     if (!user) return;
+    setInitialLoading(true);
     if (type === 'pushinpay') {
       const fetchPushinPay = async () => {
         const { data: integration } = await supabase
@@ -42,6 +44,7 @@ export default function IntegrationForm({ type, onSuccess }: IntegrationFormProp
           setApiKey('');
           setActive(false);
         }
+        setInitialLoading(false);
       };
       fetchPushinPay();
     } else if (type === 'pixel') {
@@ -57,6 +60,7 @@ export default function IntegrationForm({ type, onSuccess }: IntegrationFormProp
         } else {
           setPixelId('');
         }
+        setInitialLoading(false);
       };
       fetchPixel();
     }
@@ -72,7 +76,10 @@ export default function IntegrationForm({ type, onSuccess }: IntegrationFormProp
     else {
       setMessage('Chave salva!');
       localStorage.setItem('pushinpay_api_key', apiKey);
-      if (onSuccess) onSuccess();
+      toast.success('Chave salva com sucesso!');
+      setTimeout(() => {
+        if (onSuccess) onSuccess();
+      }, 1500);
     }
     setLoading(false);
   };
@@ -86,7 +93,10 @@ export default function IntegrationForm({ type, onSuccess }: IntegrationFormProp
     if (error) setPixelMsg(error.message);
     else {
       setPixelMsg('Pixel salvo!');
-      if (onSuccess) onSuccess();
+      toast.success('Pixel salvo com sucesso!');
+      setTimeout(() => {
+        if (onSuccess) onSuccess();
+      }, 1500);
     }
     setPixelLoading(false);
   };
@@ -97,8 +107,28 @@ export default function IntegrationForm({ type, onSuccess }: IntegrationFormProp
     toast.success('Copiado para a área de transferência!');
   };
 
+  if (initialLoading && user) {
+    return <div className="w-full max-w-md mx-auto py-6 text-center text-zinc-400">Carregando integração...</div>;
+  }
+
   return (
-    <div className="w-full max-w-md mx-auto py-6">
+    <div className="w-full max-w-md mx-auto py-6" style={{ background: '#09090B', borderRadius: 18, border: '1.5px solid #7E22CE', boxShadow: '0 2px 16px #1A093822', padding: 32 }}>
+      {/* Bloco de informações atuais da integração */}
+      {type === 'pushinpay' && apiKey && (
+        <div className="mb-4 p-4 rounded-xl" style={{ background: '#09090B', border: '1px solid #7E22CE', color: '#a1a1aa' }}>
+          <div className="mb-1 font-semibold">Chave atual:</div>
+          <div className="font-mono text-indigo-400 text-sm select-all">
+            {apiKey.slice(0, 4) + '****' + apiKey.slice(-4)}
+          </div>
+          <div className="mt-2">Status: <span className={active ? 'text-green-400' : 'text-red-400'}>{active ? 'Ativo' : 'Inativo'}</span></div>
+        </div>
+      )}
+      {type === 'pixel' && pixelId && (
+        <div className="mb-4 p-4 rounded-xl" style={{ background: '#09090B', border: '1px solid #7E22CE', color: '#a1a1aa' }}>
+          <div className="mb-1 font-semibold">Pixel ID atual:</div>
+          <div className="font-mono text-blue-400 text-sm select-all">{pixelId}</div>
+        </div>
+      )}
       {type === 'pushinpay' && (
         <form
           className="flex flex-col gap-6"
@@ -110,13 +140,17 @@ export default function IntegrationForm({ type, onSuccess }: IntegrationFormProp
             value={apiKey}
             onChange={e => setApiKey(e.target.value)}
             placeholder="Cole sua chave de API PushinPay aqui"
-            className="px-5 py-3 rounded-xl bg-zinc-900 border border-indigo-500 text-zinc-100 focus:outline-none focus:ring-2 focus:ring-indigo-500 text-lg placeholder:text-zinc-500 shadow-md"
+            className="px-5 py-3 rounded-xl bg-black border text-zinc-100 focus:outline-none text-lg placeholder:text-zinc-500 shadow-md"
+            style={{ border: '1.5px solid #7E22CE', color: '#fff', background: '#000' }}
             required
           />
           <button
             type="submit"
             disabled={loading}
-            className="flex items-center justify-center gap-2 px-6 py-3 rounded-xl bg-gradient-to-r from-indigo-500 to-indigo-400 text-white font-bold shadow-lg hover:scale-105 transition-all disabled:opacity-60 text-lg"
+            style={{ background: '#7E22CE', border: 'none', borderRadius: 12, color: '#fff', fontWeight: 700, fontSize: 17, padding: '13px 0', marginTop: 4, transition: 'all 0.18s', boxShadow: '0 1px 8px #7E22CE22', width: '100%' }}
+            onMouseOver={e => { e.currentTarget.style.background = '#5b1a99'; e.currentTarget.style.transform = 'scale(1.04)'; }}
+            onMouseOut={e => { e.currentTarget.style.background = '#7E22CE'; e.currentTarget.style.transform = 'none'; }}
+            className="flex items-center justify-center gap-2"
           >
             {loading ? 'Salvando...' : (<><Save size={20} /> Salvar Chave</>)}
           </button>
@@ -137,13 +171,17 @@ export default function IntegrationForm({ type, onSuccess }: IntegrationFormProp
             value={pixelId}
             onChange={e => setPixelId(e.target.value)}
             placeholder="Cole seu Pixel ID do Facebook aqui"
-            className="px-5 py-3 rounded-xl bg-zinc-900 border border-blue-500 text-zinc-100 focus:outline-none focus:ring-2 focus:ring-blue-500 text-lg placeholder:text-zinc-500 shadow-md"
+            className="px-5 py-3 rounded-xl bg-black border text-zinc-100 focus:outline-none text-lg placeholder:text-zinc-500 shadow-md"
+            style={{ border: '1.5px solid #7E22CE', color: '#fff', background: '#000' }}
             required
           />
           <button
             type="submit"
             disabled={pixelLoading}
-            className="flex items-center justify-center gap-2 px-6 py-3 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-400 text-white font-bold shadow-lg hover:scale-105 transition-all disabled:opacity-60 text-lg"
+            style={{ background: '#7E22CE', border: 'none', borderRadius: 12, color: '#fff', fontWeight: 700, fontSize: 17, padding: '13px 0', marginTop: 4, transition: 'all 0.18s', boxShadow: '0 1px 8px #7E22CE22', width: '100%' }}
+            onMouseOver={e => { e.currentTarget.style.background = '#5b1a99'; e.currentTarget.style.transform = 'scale(1.04)'; }}
+            onMouseOut={e => { e.currentTarget.style.background = '#7E22CE'; e.currentTarget.style.transform = 'none'; }}
+            className="flex items-center justify-center gap-2"
           >
             {pixelLoading ? 'Salvando...' : (<><Save size={20} /> Salvar Pixel</>)}
           </button>

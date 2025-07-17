@@ -43,6 +43,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       return res.status(500).json({ error: error.message });
     }
 
+    // Remover chamada para webhook UTMFY
+
     console.log('Venda aprovada com sucesso pela API:', venda);
     res.status(200).json({ success: true, data: venda });
 

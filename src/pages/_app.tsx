@@ -2,11 +2,14 @@ import type { AppProps } from 'next/app';
 import '../styles/globals.css';
 import '../styles/modal-integracao.css';
 import '../styles/dashboard-mobile.css';
+import '../styles/mobile/dashboard-relatorio-mobile.css';
+import '../styles/pwa.css';
 import { Inter } from 'next/font/google';
 import MainLayout from '../components/MainLayout';
 import { useRouter } from 'next/router';
 import { Toaster } from 'react-hot-toast';
 import { AuthProvider } from '../context/AuthContext';
+import PWAInstallPrompt from '../components/PWAInstallPrompt';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -28,6 +31,10 @@ function MyApp({ Component, pageProps }: AppProps) {
   // Importa o CSS da página de cadastro apenas quando necessário
   if (typeof window !== 'undefined' && router.pathname === '/register') {
     require('../styles/register.css');
+  }
+  // Não importa o zoom.css em nenhuma condição de checkout
+  if (typeof window !== 'undefined' && !router.pathname.startsWith('/checkout')) {
+    require('../styles/zoom.css');
   }
 
   const noLayoutRoutes = ['/login', '/register', '/forgot-password', '/checkout/[id]', '/obrigado'];
@@ -56,6 +63,12 @@ function MyApp({ Component, pageProps }: AppProps) {
         ) : (
           <Component {...pageProps} />
         )}
+        
+        {/* PWA Install Prompt - aparece em todas as páginas */}
+        <PWAInstallPrompt 
+          showOfflineStatus={true}
+          showNotificationPrompt={true}
+        />
       </main>
     </AuthProvider>
   );

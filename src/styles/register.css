@@ -6,12 +6,12 @@ body.register-page {
   display: flex;
   align-items: center;
   justify-content: center;
-  background: linear-gradient(120deg, #181c2a 0%, #23233a 100%);
+  background: #09090B;
   font-family: 'Inter', Arial, sans-serif;
 }
 
 .register-container {
-  background: #10121b;
+  background: #09090B;
   border-radius: 18px;
   box-shadow: 0 8px 32px #0006;
   border: 1.5px solid #23233a;
@@ -112,4 +112,32 @@ body.register-page {
   background: #162e2a;
   color: #34d399;
   border: 1.5px solid #7c3aed44;
+}
+
+/* ===== TEMA CLARO REGISTER ===== */
+html.light body.register-page {
+  background: #fff !important;
+  color: #181818 !important;
+}
+html.light .register-container {
+  background: #fff !important;
+  color: #181818 !important;
+  border-color: #e0e7ef !important;
+  box-shadow: 0 8px 32px #0001 !important;
+}
+html.light .register-title {
+  color: #181818 !important;
+}
+html.light .register-input {
+  background: #fff !important;
+  color: #181818 !important;
+  border-color: #e0e7ef !important;
+}
+html.light .register-btn {
+  background: linear-gradient(90deg, #22c55e 0%, #2563eb 100%) !important;
+  color: #fff !important;
+}
+html.light .register-message {
+  background: #e0e7ef !important;
+  color: #181818 !important;
 } 

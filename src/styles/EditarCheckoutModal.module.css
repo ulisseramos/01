@@ -1,0 +1,105 @@
+.editarCheckoutOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0,0,0,0.92);
+}
+
+.editarCheckoutModal {
+  width: 100%;
+  max-width: calc(1100px + 2cm);
+  margin: 0 auto;
+  padding: 48px 32px;
+  background: #000;
+  border-radius: 18px;
+  box-shadow: 0 8px 40px 0 #000a, 0 1.5px 8px #2228;
+  position: relative;
+  overflow: visible;
+  font-family: 'Inter', sans-serif;
+  border: 2px solid #1A0938;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.editarCheckoutForm {
+  width: 100%;
+  font-family: 'Inter', 'Segoe UI', Arial, sans-serif;
+}
+
+.editarCheckoutGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 32px;
+  margin-bottom: 40px;
+  align-items: flex-start;
+  justify-content: center;
+  width: 100%;
+  max-width: 100%;
+  margin-left: auto;
+  margin-right: auto;
+  font-family: 'Inter', 'Segoe UI', Arial, sans-serif;
+}
+.editarCheckoutGrid input,
+.editarCheckoutGrid select,
+.editarCheckoutGrid textarea {
+  width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
+  font-size: 16px;
+  font-weight: 400;
+  border: 2px solid #1A0938;
+  background: #1A0938;
+  color: #fff;
+  border-radius: 10px;
+  padding: 1.1rem;
+  font-family: 'Inter', 'Segoe UI', Arial, sans-serif;
+}
+.editarCheckoutGrid label {
+  font-weight: 600;
+  font-size: 15px;
+  color: #fff;
+  font-family: 'Inter', 'Segoe UI', Arial, sans-serif;
+}
+@media (max-width: 900px) {
+  .editarCheckoutGrid {
+    grid-template-columns: 1fr;
+    gap: 32px;
+  }
+}
+
+.editarCheckoutButtonRow {
+  display: flex;
+  gap: 24px;
+  justify-content: flex-end;
+  margin-top: 32px;
+}
+
+.editarCheckoutButton {
+  padding: 0.9rem 1.6rem;
+  border-radius: 10px;
+  font-weight: 600;
+  font-size: 16px;
+  border: 2px solid #1A0938;
+  background: #1A0938;
+  color: #fff;
+  cursor: pointer;
+  transition: background 0.18s, color 0.18s, border 0.18s;
+  font-family: 'Inter', 'Segoe UI', Arial, sans-serif;
+}
+
+.editarCheckoutButton:hover {
+  background: #7E22CE;
+  color: #fff;
+  border-color: #7E22CE;
+}
+
+.modal-options-wrapper {
+  /* margin-top removido */
+} 

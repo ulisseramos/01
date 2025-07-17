@@ -13,7 +13,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       .upsert({
         title,
         status,
-        utmfy_webhook_url: url,
+        url,
         tracking_code,
         products,
         payment_methods,

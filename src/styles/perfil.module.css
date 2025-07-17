@@ -32,3 +32,41 @@
     margin-top: 10px !important;
   }
 } 
+
+/* ===== TEMA CLARO PERFIL ===== */
+html.light .perfilCard, html.light .card {
+  background: #fff !important;
+  color: #181818 !important;
+  border-color: #e0e7ef !important;
+} 
+
+.light .perfilCard {
+  background: #fff !important;
+  border: 1.5px solid #E4CFF6 !important;
+  color: #181818 !important;
+  box-shadow: none !important;
+  border-radius: 16px !important;
+} 
+
+.light .btn-primary {
+  background: #fff !important;
+  color: #7c3aed !important;
+  border: 1.5px solid #E4CFF6 !important;
+  box-shadow: none !important;
+}
+.light .btn-primary:hover {
+  background: #E4CFF6 !important;
+  color: #181818 !important;
+}
+.light input,
+.light textarea {
+  background: #fff !important;
+  color: #181818 !important;
+  border: 1.5px solid #E4CFF6 !important;
+}
+.light a {
+  color: #7c3aed !important;
+}
+.light svg {
+  color: #a1a1aa !important;
+} 

@@ -1,12 +1,18 @@
 import { useState } from 'react';
 import { FiSearch, FiGrid, FiList } from 'react-icons/fi';
+import { Link2 } from 'lucide-react';
 
 export default function IntegrationsHeader() {
   const [view, setView] = useState('grid');
   return (
     <div className="w-full bg-gradient-to-br from-[#0a0a12] via-[#181826] to-[#23233a] py-10 px-4 rounded-b-3xl shadow-2xl mb-10 animate-fade-in">
       <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-6 max-w-5xl mx-auto">
-        <h1 className="text-4xl font-extrabold text-white drop-shadow-lg tracking-tight">Integrações</h1>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 18, justifyContent: 'center', marginTop: 48, marginBottom: 18 }}>
+          <div style={{ background: '#23233a', borderRadius: 12, padding: 10, display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 2px 8px #23233a22', border: '2.5px solid #1A0938' }}>
+            <Link2 size={36} color="#a1a1aa" />
+          </div>
+          <h1 style={{ color: '#fff', fontWeight: 900, fontSize: 32, letterSpacing: -1, margin: 0 }}>Integrações</h1>
+        </div>
         <div className="flex flex-col md:flex-row md:items-center gap-4 w-full md:w-auto">
           <div className="relative w-full md:w-72">
             <FiSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-purple-400" size={22} />

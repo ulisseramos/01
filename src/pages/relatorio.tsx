@@ -1,4 +1,4 @@
-import { useEffect, useState, useMemo } from 'react';
+import { useEffect, useState, useMemo, useRef } from 'react';
 import { supabase } from '../lib/supabaseClient';
 import { useAuth } from '../context/AuthContext';
 import { FaSearch, FaCheck, FaHourglassHalf, FaPercentage, FaDollarSign, FaSyncAlt, FaChevronDown, FaCalendarAlt, FaCreditCard, FaBoxOpen, FaUser, FaTag, FaCheckCircle } from 'react-icons/fa';
@@ -17,6 +17,14 @@ interface Sale {
   created_at: string;
   product_name?: string | null;
   payment_method?: string | null;
+  utm?: string | null;
+}
+
+interface SaleSummary {
+  totalRevenue: number;
+  approvedSales: number;
+  pendingSales: number;
+  totalSales: number;
 }
 
 const summaryCards = [
@@ -65,7 +73,7 @@ interface RelatorioSummaryCardProps {
 const RelatorioSummaryCard: React.FC<RelatorioSummaryCardProps> = ({ icon, label, value, subtext, cardStyle }) => (
   <div
     style={{
-      backgroundColor: '#030712',
+      backgroundColor: '#000000',
       border: '1px solid #1A0938',
       borderRadius: '0.75rem',
       padding: '1.5rem',
@@ -104,19 +112,50 @@ export default function RelatorioPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [search, setSearch] = useState('');
+  const [summary, setSummary] = useState<SaleSummary | null>(null);
+  const mainRef = useRef<HTMLDivElement>(null);
 
+  // Remover estados e lógica de filtros e paginação
+  // const [currentPage, setCurrentPage] = useState(1);
+  // const itemsPerPage = 10;
+  // const totalPages = Math.ceil(sales.length / itemsPerPage);
+  // const paginatedSales = sales.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
+
+  // Remover filteredSales, statusFilter, dateFilter, paymentFilter, productFilter, utmFilter
+  // const [statusFilter, setStatusFilter] = useState('');
+  // const [dateFilter, setDateFilter] = useState(today);
+  // const [paymentFilter, setPaymentFilter] = useState('');
+  // const [productFilter, setProductFilter] = useState('');
+  // const [utmFilter, setUtmFilter] = useState('');
+
+  // Buscar métricas igual à dashboard
+  useEffect(() => {
+    const fetchSummary = async () => {
+      try {
+        const { data, error } = await supabase.rpc('calculate_user_sales_summary', { p_user_id: user?.id || null });
+        if (error) throw error;
+        const safe = data?.[0] || {};
+        setSummary({
+          totalRevenue: Number(safe.total_revenue ?? 0),
+          approvedSales: Number(safe.approved_sales ?? 0),
+          pendingSales: Number(safe.pending_sales ?? 0),
+          totalSales: Number(safe.total_sales ?? 0),
+        });
+      } catch (e) {
+        setSummary({ totalRevenue: 0, approvedSales: 0, pendingSales: 0, totalSales: 0 });
+      }
+    };
+    fetchSummary();
+  }, [user]);
+
+  // Buscar todas as vendas, sem filtro de data, status ou usuário
   const fetchSales = async () => {
-    if (!user?.id) {
-      setLoading(false);
-      return;
-    }
     setLoading(true);
     setError(null);
     try {
       const { data, error } = await supabase
         .from('checkout_logs')
-        .select('id, nome, email, telefone, price, status, created_at')
-        .eq('user_id', user.id)
+        .select('id, nome, email, telefone, price, status, created_at, product_name, payment_method, utm')
         .order('created_at', { ascending: false });
       if (error) throw error;
       setSales(data || []);
@@ -128,31 +167,31 @@ export default function RelatorioPage() {
   };
 
   useEffect(() => {
-    if (!user) {
-      router.replace('/login');
-    } else {
-      fetchSales();
-    }
-    // eslint-disable-next-line
+    fetchSales();
   }, [user]);
 
-  const dashboardSummaryData = useMemo(() => {
-    if (loading || sales.length === 0) return {
-      totalRevenue: 0,
-      approvedSales: 0,
-      pendingSales: 0,
-      totalSales: 0,
-    };
-    const approvedSales = sales.filter(s => s.status === 'aprovado');
-    const pendingSales = sales.filter(s => s.status === 'pendente');
-    const totalRevenue = sales.reduce((acc, s) => acc + (s.price || 0), 0);
-    return {
-      totalRevenue,
-      approvedSales: approvedSales.length,
-      pendingSales: pendingSales.length,
-      totalSales: sales.length,
-    };
-  }, [sales, loading]);
+  useEffect(() => {
+    if (typeof window !== 'undefined' && mainRef.current) {
+      const html = document.documentElement;
+      if (html.classList.contains('light')) {
+        mainRef.current.style.background = '#fff';
+      } else {
+        mainRef.current.style.background = '#000';
+      }
+    }
+    const observer = new MutationObserver(() => {
+      if (mainRef.current) {
+        const html = document.documentElement;
+        if (html.classList.contains('light')) {
+          mainRef.current.style.background = '#fff';
+        } else {
+          mainRef.current.style.background = '#000';
+        }
+      }
+    });
+    observer.observe(document.documentElement, { attributes: true, attributeFilter: ['class'] });
+    return () => observer.disconnect();
+  }, []);
 
   const formatPrice = (price: number | null) => {
     if (price === null || price === undefined) return 'R$ 0,00';
@@ -171,19 +210,21 @@ export default function RelatorioPage() {
     }
   };
 
-  // Filtro de pesquisa funcional
+  // Filtro apenas pelo campo de busca
   const filteredSales = useMemo(() => {
     if (!search.trim()) return sales;
-    const term = search.trim().toLowerCase();
-    return sales.filter(sale =>
-      (sale.nome && sale.nome.toLowerCase().includes(term)) ||
-      (sale.product_name && sale.product_name.toLowerCase().includes(term)) ||
-      (sale.id && sale.id.toLowerCase().includes(term)) ||
-      (sale.status && sale.status.toLowerCase().includes(term))
-    );
+    return sales.filter(sale => {
+      return (
+        (sale.nome && sale.nome.toLowerCase().includes(search.trim().toLowerCase())) ||
+        (sale.product_name && sale.product_name.toLowerCase().includes(search.trim().toLowerCase())) ||
+        (sale.id && sale.id.toLowerCase().includes(search.trim().toLowerCase())) ||
+        (sale.status && sale.status.toLowerCase().includes(search.trim().toLowerCase()))
+      );
+    });
   }, [sales, search]);
 
   if (!user) return <div>Carregando...</div>;
+  if (error) return <div style={{ color: 'red', fontWeight: 700, padding: 24, fontSize: 18 }}>Erro: {error}</div>;
 
   // Filtros visuais apenas (não funcionais)
   return (
@@ -191,20 +232,20 @@ export default function RelatorioPage() {
       width: '100%',
       boxSizing: 'border-box',
       overflowX: 'auto',
-      paddingTop: '2rem',
-      minHeight: '100vh',
-      background: '#030712',
+      paddingTop: '16px', // Aproximadamente 1cm
+      minHeight: 'calc(100vh + 5cm)',
+      background: '#020204',
     }}>
       <div style={{
         maxWidth: 1400,
         margin: '0 auto',
         padding: '0 2rem',
       }}>
-        <main style={{ flex: 1, minWidth: 0, padding: '2rem' }}>
+        <main style={{ flex: 1, minWidth: 0, padding: '2rem', paddingTop: 0 }}>
           {/* Cabeçalho da página */}
-          <div style={{ marginBottom: '0', marginTop: '0.5rem' }}>
-            <h1 style={{ fontSize: 32, fontWeight: 900, color: '#fff', letterSpacing: '-1px', marginBottom: 6 }}>Vendas</h1>
-            <p style={{ fontSize: 18, color: '#fff', fontWeight: 400 }}>Gerencie suas transações</p>
+          <div style={{ marginBottom: '0', marginTop: 0, lineHeight: 1.1 }}>
+            <h1 style={{ fontSize: 32, fontWeight: 900, color: '#fff', letterSpacing: '-1px', marginBottom: 2, marginTop: 0 }}>Vendas</h1>
+            <p style={{ fontSize: 18, color: '#fff', fontWeight: 400, margin: 0 }}>Gerencie suas transações</p>
           </div>
 
           {/* Botão Atualizar dados alinhado à direita */}
@@ -216,7 +257,7 @@ export default function RelatorioPage() {
                 display: 'inline-flex',
                 alignItems: 'center',
                 gap: 10,
-                background: '#030712',
+                background: '#000000',
                 border: '2px solid #23243a',
                 color: '#fff',
                 fontWeight: 700,
@@ -228,8 +269,8 @@ export default function RelatorioPage() {
                 transition: 'all 0.18s',
                 opacity: loading ? 0.6 : 1,
               }}
-              onMouseOver={e => e.currentTarget.style.background = '#030712'}
-              onMouseOut={e => e.currentTarget.style.background = '#030712'}
+              onMouseOver={e => e.currentTarget.style.background = '#000000'}
+              onMouseOut={e => e.currentTarget.style.background = '#000000'}
             >
               <FaSyncAlt style={{ color: '#a78bfa', fontSize: 20, animation: loading ? 'spin 1s linear infinite' : undefined }} />
               Atualizar dados
@@ -248,28 +289,28 @@ export default function RelatorioPage() {
             <RelatorioSummaryCard
               icon={<FaCheckCircle size={26} />}
               label="Vendas aprovadas"
-              value={dashboardSummaryData.approvedSales}
+              value={summary ? summary.approvedSales : 0}
               subtext="Total de vendas aprovadas"
               cardStyle={{ flex: 1, minWidth: 0, maxWidth: 'none' }}
             />
             <RelatorioSummaryCard
               icon={<FaHourglassHalf size={26} />}
               label="Vendas pendentes"
-              value={dashboardSummaryData.pendingSales}
+              value={summary ? summary.pendingSales : 0}
               subtext="Aguardando confirmação"
               cardStyle={{ flex: 1, minWidth: 0, maxWidth: 'none' }}
             />
             <RelatorioSummaryCard
               icon={<FaPercentage size={26} />}
               label="Taxa de conversão"
-              value={dashboardSummaryData.totalSales > 0 ? ((dashboardSummaryData.approvedSales / dashboardSummaryData.totalSales) * 100).toFixed(2) + '%' : '0.00%'}
+              value={summary && summary.totalSales > 0 ? ((summary.approvedSales / summary.totalSales) * 100).toFixed(2) + '%' : '0.00%'}
               subtext="Aprovadas + Total"
               cardStyle={{ flex: 1, minWidth: 0, maxWidth: 'none' }}
             />
             <RelatorioSummaryCard
               icon={<FaDollarSign size={26} />}
               label="Valor total"
-              value={`R$ ${dashboardSummaryData.totalRevenue.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}`}
+              value={`R$ ${summary ? summary.totalRevenue.toLocaleString('pt-BR', { minimumFractionDigits: 2 }) : '0,00'}`}
               subtext="Receita bruta"
               cardStyle={{ flex: 1, minWidth: 0, maxWidth: 'none' }}
             />
@@ -281,7 +322,7 @@ export default function RelatorioPage() {
             flexWrap: 'wrap',
             gap: '1.1rem',
             alignItems: 'center',
-            background: '#030712',
+            background: '#020204',
             borderRadius: '1.2rem',
             padding: '1.5rem 2.5rem',
             marginBottom: '2rem',
@@ -289,7 +330,7 @@ export default function RelatorioPage() {
             boxShadow: '0 4px 24px 0 rgba(0,0,0,0.10)',
           }}>
             <div style={{
-              background: '#030712',
+              background: '#020204',
               border: '2px solid #23243a',
               borderRadius: '1rem',
               boxShadow: '0 2px 8px 0 rgba(0,0,0,0.10)',
@@ -335,52 +376,36 @@ export default function RelatorioPage() {
                 }}
               />
             </div>
-            {[
-              { label: 'Status', minWidth: 130 },
-              { label: 'Data', minWidth: 110 },
-              { label: 'Método de Pagamento', minWidth: 190 },
-              { label: 'Produto', minWidth: 120 },
-              { label: 'UTM', minWidth: 100 },
-            ].map((btn, idx) => (
-              <button
-                key={btn.label}
-                className="filter-btn"
-                style={{
-                  background: '#030712',
-                  border: '2px solid #23243a',
-                  borderRadius: '1rem',
-                  color: '#a1a1aa',
-                  minWidth: btn.minWidth,
-                  height: 48,
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: 8,
-                  fontWeight: 700,
-                  fontSize: 17,
-                  padding: '0 1.5rem',
-                  boxShadow: '0 2px 8px 0 rgba(0,0,0,0.10)',
-                  transition: 'border 0.2s, color 0.2s, box-shadow 0.2s',
-                  cursor: 'pointer',
-                }}
-                onMouseOver={e => {
-                  e.currentTarget.style.border = '2px solid #a78bfa';
-                  e.currentTarget.style.color = '#a78bfa';
-                  e.currentTarget.style.boxShadow = '0 4px 16px 0 rgba(0,0,0,0.16)';
-                }}
-                onMouseOut={e => {
-                  e.currentTarget.style.border = '2px solid #23243a';
-                  e.currentTarget.style.color = '#a1a1aa';
-                  e.currentTarget.style.boxShadow = '0 2px 8px 0 rgba(0,0,0,0.10)';
-                }}
-              >
-                {btn.label} <FaChevronDown style={{ marginLeft: 6, fontSize: 18 }} />
-              </button>
-            ))}
+            {/* <select value={statusFilter} onChange={e => setStatusFilter(e.target.value)} style={{ minWidth: 130, height: 48, borderRadius: '1rem', border: '2px solid #23243a', background: '#000', color: '#a1a1aa', fontWeight: 700, fontSize: 17, padding: '0 1.5rem', cursor: 'pointer' }}>
+              <option value="">Status</option>
+              <option value="aprovado">Aprovado</option>
+              <option value="pendente">Pendente</option>
+              <option value="chargeback">Chargeback</option>
+            </select> */}
+            {/* <input type="date" value={dateFilter} onChange={e => setDateFilter(e.target.value)} style={{ minWidth: 110, height: 48, borderRadius: '1rem', border: '2px solid #23243a', background: '#000', color: '#a1a1aa', fontWeight: 700, fontSize: 17, padding: '0 1.5rem', cursor: 'pointer' }} /> */}
+            {/* <select value={paymentFilter} onChange={e => setPaymentFilter(e.target.value)} style={{ minWidth: 190, height: 48, borderRadius: '1rem', border: '2px solid #23243a', background: '#000', color: '#a1a1aa', fontWeight: 700, fontSize: 17, padding: '0 1.5rem', cursor: 'pointer' }}>
+              <option value="">Método de Pagamento</option>
+              <option value="pix">Pix</option>
+              <option value="boleto">Boleto</option>
+              <option value="cartao">Cartão</option>
+            </select> */}
+            {/* <select value={productFilter} onChange={e => setProductFilter(e.target.value)} style={{ minWidth: 120, height: 48, borderRadius: '1rem', border: '2px solid #23243a', background: '#000', color: '#a1a1aa', fontWeight: 700, fontSize: 17, padding: '0 1.5rem', cursor: 'pointer' }}>
+              <option value="">Produto</option>
+              {[...new Set(sales.map(s => s.product_name).filter(Boolean))].map((name, idx) => (
+                <option key={idx} value={name as string}>{name}</option>
+              ))}
+            </select> */}
+            {/* <select value={utmFilter} onChange={e => setUtmFilter(e.target.value)} style={{ minWidth: 100, height: 48, borderRadius: '1rem', border: '2px solid #a78bfa', background: '#000', color: '#a78bfa', fontWeight: 700, fontSize: 17, padding: '0 1.5rem', cursor: 'pointer' }}>
+              <option value="">UTM</option>
+              {[...new Set(sales.map(s => s.utm).filter(Boolean))].map((utm, idx) => (
+                <option key={idx} value={utm as string}>{utm}</option>
+              ))}
+            </select> */}
           </div>
 
           {/* Caixa Transações */}
           <div style={{
-            background: '#030712',
+            background: '#020204',
             border: '2px solid #23243a',
             borderRadius: '1.2rem',
             boxShadow: '0 2px 12px 0 rgba(0,0,0,0.10)',
@@ -390,7 +415,7 @@ export default function RelatorioPage() {
           }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
               <h2 style={{ fontSize: 26, fontWeight: 800, color: '#fff', letterSpacing: '-0.5px' }}>Transações</h2>
-              <span style={{ fontSize: 16, color: '#a1a1aa', fontWeight: 500 }}>{sales.length} transações encontradas</span>
+              <span style={{ fontSize: 16, color: '#a1a1aa', fontWeight: 500 }}>{filteredSales.length} transações encontradas</span>
             </div>
             <div style={{ overflowX: 'auto', borderRadius: '1rem' }}>
               <table style={{ width: '100%', borderCollapse: 'separate', borderSpacing: 0, background: 'transparent' }}>
@@ -421,7 +446,7 @@ export default function RelatorioPage() {
                       <td style={{ padding: '1rem', color: '#c4b5fd', fontWeight: 500 }}>{sale.product_name || '-'}</td>
                       <td style={{ padding: '1rem', color: '#a1a1aa', fontWeight: 500, maxWidth: 140, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{sale.nome || '-'}</td>
                       <td style={{ padding: '1rem' }}>
-                        <span style={{ background: '#030712', borderRadius: '50%', width: 36, height: 36, display: 'inline-flex', alignItems: 'center', justifyContent: 'center' }}>
+                        <span style={{ background: '#000000', borderRadius: '50%', width: 36, height: 36, display: 'inline-flex', alignItems: 'center', justifyContent: 'center' }}>
                           <SiPix style={{ color: '#00B686', fontSize: 20 }} />
                         </span>
                       </td>
@@ -439,9 +464,24 @@ export default function RelatorioPage() {
                 </tbody>
               </table>
             </div>
+            {/* {totalPages > 1 && (
+              <div style={{ display: 'flex', justifyContent: 'center', gap: 12, marginTop: 24 }}>
+                <button
+                  onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
+                  disabled={currentPage === 1}
+                  style={{ padding: '0.5rem 1.2rem', borderRadius: 8, border: 'none', background: '#1A0938', color: '#fff', fontWeight: 700, cursor: currentPage === 1 ? 'not-allowed' : 'pointer', opacity: currentPage === 1 ? 0.5 : 1 }}
+                >Anterior</button>
+                <span style={{ color: '#fff', fontWeight: 700, fontSize: 16 }}>Página {currentPage} de {totalPages}</span>
+                <button
+                  onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
+                  disabled={currentPage === totalPages}
+                  style={{ padding: '0.5rem 1.2rem', borderRadius: 8, border: 'none', background: '#1A0938', color: '#fff', fontWeight: 700, cursor: currentPage === totalPages ? 'not-allowed' : 'pointer', opacity: currentPage === totalPages ? 0.5 : 1 }}
+                >Próxima</button>
+              </div>
+            )} */}
           </div>
         </main>
       </div>
     </div>
   );
-} 
+}  

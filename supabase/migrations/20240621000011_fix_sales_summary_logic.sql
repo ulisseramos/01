@@ -5,7 +5,7 @@ as $$
 begin
   return query
   select
-    coalesce(sum(case when cl.status = 'aprovado' then p.price else 0 end), 0) as total_revenue,
+    coalesce(sum(p.price), 0) as total_revenue, -- Soma tudo, independente do status
     coalesce(count(case when cl.status = 'aprovado' then 1 end), 0) as approved_sales,
     coalesce(count(case when cl.status = 'pendente' then 1 end), 0) as pending_sales,
     coalesce(count(cl.log_id), 0) as total_sales
